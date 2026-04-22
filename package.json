@@ -1,0 +1,23 @@
+{
+  "name": "bnsd",
+  "version": "1.0.0",
+  "description": "말씀 나눔 웹 서비스 - 성당 청년회",
+  "main": "server.js",
+  "scripts": {
+    "start": "npx wrangler pages dev public",
+    "dev": "npx wrangler pages dev public"
+  },
+  "keywords": [
+    "catholic",
+    "gospel",
+    "sharing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "node-html-parser": "^7.1.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.84.1"
+  }
+}

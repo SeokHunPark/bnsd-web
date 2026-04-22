@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="말씀 나눔 - 성당 청년회 복음 나눔 서비스">
+  <title>말씀 나눔</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 상단 장식 라인 -->
+  <div class="top-decoration"></div>
+
+  <div class="app" id="app">
+
+    <!-- ============================================================
+         메인 페이지 (#home)
+         ============================================================ -->
+    <section id="page-home" class="page-section home active">
+      <div class="home__cross">✝</div>
+      <h1 class="home__title">말씀 나눔</h1>
+      <p class="home__subtitle">주님의 말씀을 함께 나눕니다</p>
+      <div class="home__divider"></div>
+      <div class="home__buttons">
+        <button id="btn-join" class="btn btn--primary btn--full" type="button">
+          🕊️ 나눔 참여하기
+        </button>
+        <button id="btn-admin" class="btn btn--secondary btn--full" type="button">
+          ⚙️ 나눔 설정하기
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         나눔 참여 페이지 (#sharing)
+         ============================================================ -->
+    <section id="page-sharing" class="page-section">
+      <nav class="nav-header">
+        <button class="btn-back" data-navigate="home" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          돌아가기
+        </button>
+      </nav>
+
+      <!-- 로딩 상태 -->
+      <div id="sharing-loading" class="loading-spinner">
+        <div class="loading-spinner__icon"></div>
+        <span>나눔 데이터를 불러오는 중...</span>
+      </div>
+
+      <!-- 미설정 상태 -->
+      <div id="sharing-empty" class="sharing__empty" style="display:none;">
+        <div class="sharing__empty-icon">📖</div>
+        <p class="sharing__empty-text">
+          아직 설정된 나눔이 없습니다.<br>
+          관리자가 나눔을 설정해주세요.
+        </p>
+      </div>
+
+      <!-- 나눔 콘텐츠 -->
+      <div id="sharing-content" style="display:none;">
+        <!-- 헤더: 날짜 + 전례명 -->
+        <div class="sharing__header">
+          <p class="sharing__date" id="sharing-date"></p>
+          <h2 class="sharing__liturgy" id="sharing-liturgy"></h2>
+          <div class="sharing__divider"></div>
+        </div>
+
+        <!-- 복음 장절 -->
+        <p class="sharing__reference" id="sharing-reference"></p>
+
+        <!-- 핵심 구절 -->
+        <div class="sharing__key-verse" id="sharing-key-verse-box">
+          <p class="sharing__key-verse-text" id="sharing-key-verse"></p>
+        </div>
+
+        <!-- 복음 본문 -->
+        <div class="sharing__gospel-card">
+          <div class="sharing__gospel-title">복음</div>
+          <div class="sharing__gospel-text" id="sharing-gospel-text"></div>
+        </div>
+
+        <!-- 성찰하기 -->
+        <div class="sharing__card" id="sharing-reflection-card">
+          <div class="sharing__card-title">성찰하기</div>
+          <div class="sharing__card-text" id="sharing-reflection-text"></div>
+        </div>
+
+        <!-- 새겨보기 -->
+        <div class="sharing__card" id="sharing-contemplation-card">
+          <div class="sharing__card-title">새겨보기</div>
+          <div class="sharing__card-text" id="sharing-contemplation-text"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         나눔 설정 페이지 (#admin)
+         ============================================================ -->
+    <section id="page-admin" class="page-section">
+      <nav class="nav-header">
+        <button class="btn-back" data-navigate="home" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          돌아가기
+        </button>
+      </nav>
+
+      <h2 class="admin__title">✝ 나눔 설정</h2>
+
+      <form id="admin-form" class="admin__form" autocomplete="off">
+
+        <!-- 날짜 선택 + 가져오기 -->
+        <div class="admin__date-row">
+          <div class="form-group">
+            <label class="form-group__label" for="admin-date">날짜 선택</label>
+            <input type="date" id="admin-date" class="input" required>
+          </div>
+          <button type="button" id="btn-fetch-missa" class="btn btn--primary btn--sm">
+            📥 가져오기
+          </button>
+        </div>
+
+        <!-- 다중 미사 선택 (기본적으로 숨김) -->
+        <div class="form-group" id="group-mass-select" style="display: none; margin-top: 1rem;">
+          <label class="form-group__label" for="admin-mass-select">미사 선택 (해당 날짜에 여러 미사가 있는 경우)</label>
+          <select id="admin-mass-select" class="input"></select>
+        </div>
+
+        <div class="admin__section-divider">크롤링 자동 채움</div>
+
+        <!-- 전례명 (자동 채움) -->
+        <div class="form-group" id="group-liturgy">
+          <label class="form-group__label" for="admin-liturgy">전례명 (주일/축일)</label>
+          <span class="form-group__auto-badge">자동 채움</span>
+          <input type="text" id="admin-liturgy" class="input" placeholder="예: 부활 제3주일">
+        </div>
+
+        <!-- 복음 장절 (자동 채움) -->
+        <div class="form-group" id="group-reference">
+          <label class="form-group__label" for="admin-reference">복음 장절</label>
+          <span class="form-group__auto-badge">자동 채움</span>
+          <input type="text" id="admin-reference" class="input" placeholder="예: 루카 24,13-35">
+        </div>
+
+        <!-- 복음 본문 (자동 채움) -->
+        <div class="form-group" id="group-gospel">
+          <label class="form-group__label" for="admin-gospel">복음 본문</label>
+          <span class="form-group__auto-badge">자동 채움</span>
+          <textarea id="admin-gospel" class="textarea textarea--large" placeholder="매일미사에서 자동으로 가져옵니다..."></textarea>
+        </div>
+
+        <!-- 복음 핵심 구절 (자동 채움) -->
+        <div class="form-group" id="groupKeyVerse">
+          <label class="form-group__label form-group__label--required" for="admin-key-verse">복음 핵심 구절</label>
+          <span class="form-group__auto-badge">자동 채움</span>
+          <input type="text" id="admin-key-verse" class="input" placeholder="예: 빵을 떼실 때에 예수님을 알아보았다." required>
+        </div>
+
+        <div class="admin__section-divider">직접 입력</div>
+
+        <!-- 성찰하기 (직접 입력) -->
+        <div class="form-group">
+          <label class="form-group__label form-group__label--required" for="admin-reflection">성찰하기</label>
+          <textarea id="admin-reflection" class="textarea" placeholder="성찰하기 텍스트를 입력해주세요..." required></textarea>
+        </div>
+
+        <!-- 새겨보기 (직접 입력) -->
+        <div class="form-group">
+          <label class="form-group__label form-group__label--required" for="admin-contemplation">새겨보기</label>
+          <textarea id="admin-contemplation" class="textarea" placeholder="새겨보기 텍스트를 입력해주세요..." required></textarea>
+        </div>
+
+        <!-- 설정 완료 버튼 -->
+        <button type="submit" id="btn-submit" class="btn btn--primary btn--full admin__submit">
+          ✅ 설정 완료
+        </button>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- ============================================================
+       PIN 인증 모달
+       ============================================================ -->
+  <div id="pin-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal__title">🔒 관리자 인증</div>
+      <p class="modal__desc">관리자 비밀번호를 입력해주세요</p>
+      <input type="password" id="pin-input" class="modal__input" maxlength="10" placeholder="••••" autocomplete="off">
+      <p id="pin-error" class="modal__error"></p>
+      <div class="modal__buttons">
+        <button type="button" id="btn-pin-cancel" class="btn btn--secondary btn--sm">취소</button>
+        <button type="button" id="btn-pin-submit" class="btn btn--primary btn--sm">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       확인 모달
+       ============================================================ -->
+  <div id="confirm-modal" class="modal-overlay confirm-modal">
+    <div class="modal">
+      <div class="modal__icon">✝</div>
+      <div class="modal__title" id="confirm-title">설정 완료</div>
+      <p class="modal__desc" id="confirm-desc">나눔 설정이 저장되었습니다.</p>
+      <div class="modal__buttons">
+        <button type="button" id="btn-confirm-ok" class="btn btn--primary btn--sm btn--full">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 메시지 -->
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

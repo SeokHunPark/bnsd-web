@@ -1,0 +1,9 @@
+node_modules/
+.env
+data/sharing.json
+.DS_Store
+
+# AI Context Documents
+GEMINI.md
+CLAUDE.md
+CONTEXT.md
