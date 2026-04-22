@@ -1,11 +1,3 @@
 name = "bnsd"
 compatibility_date = "2024-04-22"
 pages_build_output_dir = "public"
-
-[vars]
-ADMIN_PIN = "2013"
-
-[[kv_namespaces]]
-binding = "BNSD_KV"
-preview_id = "test-kv"
-id = "test-kv"
